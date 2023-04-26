@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String @id @default(cuid())
+  email String @unique
+  name  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  password Password?
+
+  isTeacher Boolean @default(false)
+  groups Group[]
+  teacherCounselings Counseling[] @relation("TeacherCounselings")
+  studentCounselings Counseling[] @relation("StudentCounselings")
+}
+
+model Password {
+  hash String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique
+}
+
+model Subject {
+  id    String @id @default(cuid())
+  name  String @unique
+
+  groups Group[]
+}
+
+model Group {
+  id    String @id @default(cuid())
+  name  String
+
+  subject Subject @relation(fields: [subjectName], references: [name])
+  subjectName String
+
+  users User[]
+  counselings Counseling[]
+}
+
+model Counseling {
+  id String @id @default(cuid())
+
+  teacher User @relation("TeacherCounselings", fields: [teacherId], references: [id])
+  teacherId String
+
+  student User @relation("StudentCounselings", fields: [studentId], references: [id])
+  studentId String
+
+  group Group @relation(fields: [groupId], references: [id])
+  groupId String
+
+  status String
+
+  date DateTime
+  description String
+
+}
