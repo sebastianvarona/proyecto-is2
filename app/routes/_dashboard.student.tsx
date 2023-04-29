@@ -156,7 +156,7 @@ export default function StudentRoute() {
               {teachers.map((teacher: User) => (
                 <Link
                   key={teacher.id}
-                  to={`?date=${dateQuery ? `${dateQuery}&` : null}teacher=${
+                  to={`?${dateQuery ? `date=${dateQuery}&` : ''}teacher=${
                     teacher.id
                   }`}
                 >

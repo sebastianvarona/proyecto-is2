@@ -6,7 +6,7 @@ import { json } from '@remix-run/node';
 import { getUser, requireUser } from '~/lib/utils/session.server';
 import { getGroupsFromUser } from '~/lib/models/group.server';
 import { getCounselingsFromTeacher } from '~/lib/models/counseling.server';
-import { Link, Outlet, useLoaderData } from '@remix-run/react';
+import { Form, Link, Outlet, useLoaderData } from '@remix-run/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -34,8 +34,8 @@ export const loader = async ({ request }: LoaderArgs) => {
   if (!user?.isTeacher) return redirect('/');
 
   const query = new URLSearchParams(request.url.split('?')[1]);
-  const monthYear = query.get('monthYear');
-  const [monthString, yearString] = monthYear?.split('-') ?? [null, null];
+  const dateQP = query.get('date');
+  const [monthString, yearString] = dateQP?.split('-') ?? [null, null];
   const date = new Date();
   const month = monthString ? +monthString - 1 : date.getMonth();
   const year = yearString ? +yearString : date.getFullYear();
@@ -77,31 +77,30 @@ export default function TeacherRoute() {
                   Asesorías
                 </h1>
               </div>
-              <div className="flex items-center gap-4">
-                <Link
-                  to={`/teacher?monthYear=${format(
-                    new Date(data.year, data.month - 1),
-                    'MM-yyyy'
-                  )}`}
-                  className="text-primary"
+              <Form method="GET" className="flex items-center gap-4">
+                <button
+                  type="submit"
+                  id="date"
+                  name="date"
+                  value={format(new Date(data.year, data.month - 1), 'MM-yyyy')}
                 >
-                  <ChevronLeftIcon className="w-6 h-6" />
-                </Link>
+                  <ChevronLeftIcon className="w-6 h-6 text-primary" />
+                </button>
+
                 <h1 className="text-2xl font-medium capitalize text-primary">
                   {format(new Date(data.year, data.month), 'MMMM yyyy', {
                     locale: es,
                   })}
                 </h1>
-                <Link
-                  to={`/teacher?monthYear=${format(
-                    new Date(data.year, data.month + 1),
-                    'MM-yyyy'
-                  )}`}
-                  className="text-primary"
+                <button
+                  type="submit"
+                  id="date"
+                  name="date"
+                  value={format(new Date(data.year, data.month + 1), 'MM-yyyy')}
                 >
-                  <ChevronRightIcon className="w-6 h-6" />
-                </Link>
-              </div>
+                  <ChevronRightIcon className="w-6 h-6 text-primary" />
+                </button>
+              </Form>
             </div>
             <CounselingList role="teacher" data={data} />
           </div>
