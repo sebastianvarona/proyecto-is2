@@ -1,36 +1,18 @@
-import { ActionArgs, json } from "@remix-run/node";
-import { Form, useActionData, useSearchParams } from "@remix-run/react";
+import type { ActionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { Form, Link, useActionData } from "@remix-run/react";
 import { useEffect, useRef } from "react";
 import { verifyLogin } from "~/lib/models/user.server";
-import { db } from "~/lib/utils/db.server";
 import { createUserSession } from "~/lib/utils/session.server";
-
-const DEFAULT_REDIRECT = "/";
 
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
-}
-
-export function safeRedirect(
-  to: FormDataEntryValue | string | null | undefined,
-  defaultRedirect: string = DEFAULT_REDIRECT
-) {
-  if (!to || typeof to !== "string") {
-    return defaultRedirect;
-  }
-
-  if (!to.startsWith("/") || to.startsWith("//")) {
-    return defaultRedirect;
-  }
-
-  return to;
 }
 
 export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
-  const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
   const remember = formData.get("remember");
 
   if (!validateEmail(email)) {
@@ -57,7 +39,6 @@ export const action = async ({ request }: ActionArgs) => {
   }
 
   return createUserSession({
-    redirectTo,
     remember: remember === "on" ? true : false,
     request,
     userId: user.id,
@@ -65,8 +46,6 @@ export const action = async ({ request }: ActionArgs) => {
 };
 
 export default function LoginRoute() {
-  const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") || "/";
   const actionData = useActionData<typeof action>();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -153,7 +132,6 @@ export default function LoginRoute() {
                     </div>
                   </div>
 
-                  <input type="hidden" name="redirectTo" value={redirectTo} />
                   <div>
                     <button
                       type="submit"
@@ -181,15 +159,15 @@ export default function LoginRoute() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 mt-6">
-                  <a
-                    href="#"
+                  <Link
+                    to={"/"}
                     className="flex w-full items-center outline outline-black/20 justify-center gap-3 rounded-md bg-white px-3 py-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D9BF0]"
                   >
                     <img src="/icons/google.svg" className="w-8" alt="Google" />
                     <span className="text-sm font-semibold leading-6">
                       Google
                     </span>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

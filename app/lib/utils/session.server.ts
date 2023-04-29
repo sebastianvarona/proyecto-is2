@@ -41,14 +41,10 @@ export async function getUser(request: Request) {
   throw await logout(request);
 }
 
-export async function requireUserId(
-  request: Request,
-  redirectTo: string = new URL(request.url).pathname
-) {
+export async function requireUserId(request: Request) {
   const userId = await getUserId(request);
   if (!userId) {
-    const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
-    throw redirect(`/login?${searchParams}`);
+    throw redirect("/login");
   }
   return userId;
 }
@@ -66,16 +62,14 @@ export async function createUserSession({
   request,
   userId,
   remember,
-  redirectTo,
 }: {
   request: Request;
   userId: string;
   remember: boolean;
-  redirectTo: string;
 }) {
   const session = await getSession(request);
   session.set(USER_SESSION_KEY, userId);
-  return redirect(redirectTo, {
+  return redirect("/", {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session, {
         maxAge: remember

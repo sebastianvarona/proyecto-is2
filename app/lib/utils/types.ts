@@ -1,5 +1,6 @@
 export enum StatusType {
-  PENDIENTE = "Pendiente",
-  ACEPTADO = "Aceptado",
-  RECHAZADO = "Rechazado",
+  ACEPTADO,
+  PENDIENTE,
+  RECHAZADO,
+  CANCELADO,
 }

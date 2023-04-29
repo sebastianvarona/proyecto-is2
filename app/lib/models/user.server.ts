@@ -59,3 +59,40 @@ export async function verifyLogin(
 
   return userWithoutPassword;
 }
+
+export async function getTeachers(groups: { id: string; name: string }[] = []) {
+  const teachers = await db.user.findMany({
+    where: {
+      isTeacher: true,
+      groups: {
+        some: {
+          id: {
+            in: groups.map((group) => group.id),
+          },
+        },
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+  return teachers;
+}
+
+export async function getTeacherFromGroup(groupId: string) {
+  const teacher = await db.user.findFirst({
+    where: {
+      isTeacher: true,
+      groups: {
+        some: {
+          id: groupId,
+        },
+      },
+    },
+    select: {
+      id: true,
+    },
+  });
+  return teacher;
+}

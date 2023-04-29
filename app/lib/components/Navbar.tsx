@@ -1,8 +1,9 @@
-import { Fragment } from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import type { User } from "@prisma/client";
 
-export default function Navbar({ name }: { name: string }) {
+export default function Navbar({ user }: { user: any }) {
+  const userObj: User = user;
   return (
     <Disclosure as="nav" className="bg-primary">
       {({ open }) => (
@@ -38,14 +39,15 @@ export default function Navbar({ name }: { name: string }) {
                 </h1>
               </div>
 
-              <div className="flex gap-4 items-center text-white">
+              <div className="flex items-center gap-4 text-white">
                 <span>
-                  Hola <span className="italic font-semibold">{name}</span>
+                  Hola{" "}
+                  <span className="italic font-semibold">{userObj.name}</span>
                 </span>
                 <form action="/logout" method="post">
                   <button
                     type="submit"
-                    className="button border border-white px-2 py-1 hover:bg-white/10 rounded-md"
+                    className="px-2 py-1 border border-white rounded-md button hover:bg-white/10"
                   >
                     Logout
                   </button>

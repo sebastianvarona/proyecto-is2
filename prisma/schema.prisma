@@ -63,9 +63,8 @@ model Counseling {
   group Group @relation(fields: [groupId], references: [id])
   groupId String
 
-  status String
+  status Int
 
   date DateTime
   description String
-
 }

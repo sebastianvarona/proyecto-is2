@@ -102,21 +102,9 @@ async function seed() {
       status: StatusType.PENDIENTE,
       date: new Date(),
       description: "Necesito ayuda con el proyecto de la materia",
-      student: {
-        connect: {
-          id: svarona.id,
-        },
-      },
-      teacher: {
-        connect: {
-          id: asolano.id,
-        },
-      },
-      group: {
-        connect: {
-          id: groups.find((group) => group.name === "1B")!.id,
-        },
-      },
+      studentId: svarona.id,
+      teacherId: asolano.id,
+      groupId: groups.find((group) => group.name === "1B")!.id,
     },
   });
 
@@ -125,21 +113,20 @@ async function seed() {
       status: StatusType.ACEPTADO,
       date: new Date(),
       description: "No entiendo el tema de las relaciones",
-      student: {
-        connect: {
-          id: svarona.id,
-        },
-      },
-      teacher: {
-        connect: {
-          id: ccruz.id,
-        },
-      },
-      group: {
-        connect: {
-          id: groups.find((group) => group.name === "1C")!.id,
-        },
-      },
+      studentId: svarona.id,
+      teacherId: ccruz.id,
+      groupId: groups.find((group) => group.name === "1C")!.id,
+    },
+  });
+
+  await prisma.counseling.create({
+    data: {
+      status: StatusType.RECHAZADO,
+      date: new Date(),
+      description: "No entiendo el tema de las relaciones",
+      studentId: svarona.id,
+      teacherId: ccruz.id,
+      groupId: groups.find((group) => group.name === "1C")!.id,
     },
   });
 
