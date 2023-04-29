@@ -4,14 +4,18 @@ import { StatusType } from '../utils/types';
 export async function getCounselingsFromStudent(
   studentId: string,
   month: number,
-  year: number
+  year: number,
+  teacherId?: string
 ) {
   const counselings = await db.counseling.findMany({
     where: {
       studentId: studentId,
+      teacherId: {
+        contains: teacherId,
+      },
       date: {
-        gte: new Date(year, month - 1, 1),
-        lt: new Date(year, month, 1),
+        gte: new Date(year, month, 1),
+        lt: new Date(year, month + 1, 1),
       },
     },
     select: {
@@ -45,10 +49,18 @@ export async function getCounselingsFromStudent(
   return counselings;
 }
 
-export async function getCounselingsFromTeacher(teacherId: string) {
+export async function getCounselingsFromTeacher(
+  teacherId: string,
+  month: number,
+  year: number
+) {
   const counselings = await db.counseling.findMany({
     where: {
       teacherId: teacherId,
+      date: {
+        gte: new Date(year, month, 1),
+        lt: new Date(year, month + 1, 1),
+      },
     },
     select: {
       id: true,

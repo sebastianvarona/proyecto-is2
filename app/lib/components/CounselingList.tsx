@@ -124,8 +124,8 @@ export default function CounselingList({ data, role }: Props) {
 
       <div className="flow-root mt-8">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <table className="min-w-full divide-y divide-gray-300">
+          <div className="inline-block min-w-full py-2 align-middle border-2 rounded-md sm:px-6 lg:px-8">
+            <table className="min-w-full divide-y-2">
               <thead>
                 <tr>
                   <th

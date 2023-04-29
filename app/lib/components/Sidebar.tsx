@@ -20,7 +20,42 @@ export default function Sidebar({
   const [selectedDate, setSelectedDate] = useState<Date>(new Date(Date.now()));
 
   return (
-    <div className="flex flex-col h-screen max-h-screen min-h-screen col-span-3 p-8 bg-gray-200 pt-28">
+    <div className="flex flex-col h-screen max-h-screen min-h-screen col-span-3 p-8 pt-20 bg-gray-200">
+      {/* CALENDARIO */}
+      <div className="flex items-center justify-between h-32 p-8 mb-8 -mx-8 border border-b-gray-300">
+        <Link
+          to={`/student?monthYear=${format(
+            new Date(activeMonth.getFullYear(), activeMonth.getMonth() - 1),
+            'MM-yyyy'
+          )}`}
+          className="text-primary"
+        >
+          <ChevronLeftIcon className="w-6 h-6" />
+        </Link>
+        <h1 className="text-2xl font-medium capitalize text-primary">
+          {formatMonthTitle(activeMonth)}
+        </h1>
+        <Link
+          to={`/student?monthYear=${format(
+            new Date(activeMonth.getFullYear(), activeMonth.getMonth() + 1),
+            'MM-yyyy'
+          )}`}
+          className="text-primary"
+        >
+          <ChevronRightIcon className="w-6 h-6" />
+        </Link>
+      </div>
+      {/* <div>
+        <DayPicker
+          mode="single"
+          locale={es}
+          selected={selectedDate}
+          onSelect={(date) => {
+            setSelectedDate(date || new Date(Date.now()));
+          }}
+        />
+      </div> */}
+
       {/* BUSCADOR */}
       <div className="mb-6">
         <label
@@ -52,40 +87,6 @@ export default function Sidebar({
           ))}
         </ul>
       </div>
-      {/* CALENDARIO */}
-      <div className="flex items-center justify-between h-32 p-8 mt-8 -mx-8 -mb-8 border border-t-gray-300">
-        <Link
-          to={`/student?monthYear=${format(
-            new Date(activeMonth.getFullYear(), activeMonth.getMonth() - 1),
-            'MM-yyyy'
-          )}`}
-          className="text-primary"
-        >
-          <ChevronLeftIcon className="w-6 h-6" />
-        </Link>
-        <h1 className="text-3xl font-medium capitalize text-primary">
-          {formatMonthTitle(activeMonth)}
-        </h1>
-        <Link
-          to={`/student?monthYear=${format(
-            new Date(activeMonth.getFullYear(), activeMonth.getMonth() + 1),
-            'MM-yyyy'
-          )}`}
-          className="text-primary"
-        >
-          <ChevronRightIcon className="w-6 h-6" />
-        </Link>
-      </div>
-      {/* <div>
-        <DayPicker
-          mode="single"
-          locale={es}
-          selected={selectedDate}
-          onSelect={(date) => {
-            setSelectedDate(date || new Date(Date.now()));
-          }}
-        />
-      </div> */}
     </div>
   );
 }
