@@ -1,6 +1,7 @@
-import { Disclosure } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import type { User } from "@prisma/client";
+import { Disclosure } from '@headlessui/react';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import type { User } from '@prisma/client';
+import { Link } from '@remix-run/react';
 
 export default function Navbar({ user }: { user: any }) {
   const userObj: User = user;
@@ -21,27 +22,29 @@ export default function Navbar({ user }: { user: any }) {
                   )}
                 </Disclosure.Button>
               </div>
-              <div className="flex items-center justify-center flex-1 sm:items-stretch sm:justify-start">
-                <div className="flex items-center flex-shrink-0">
-                  <img
-                    className="block w-auto h-20 lg:hidden"
-                    src="/alt_logo.png"
-                    alt="UAO"
-                  />
-                  <img
-                    className="hidden w-auto h-14 lg:block"
-                    src="/alt_logo.png"
-                    alt="UAO"
-                  />
+              <Link to="/">
+                <div className="flex items-center justify-center flex-1 sm:items-stretch sm:justify-start">
+                  <div className="flex items-center flex-shrink-0">
+                    <img
+                      className="block w-auto h-20 lg:hidden"
+                      src="/alt_logo.png"
+                      alt="UAO"
+                    />
+                    <img
+                      className="hidden w-auto h-14 lg:block"
+                      src="/alt_logo.png"
+                      alt="UAO"
+                    />
+                  </div>
+                  <h1 className="flex items-center ml-10 text-3xl font-bold text-white">
+                    SWAUE
+                  </h1>
                 </div>
-                <h1 className="flex items-center ml-10 text-3xl font-bold text-white">
-                  SWAUE
-                </h1>
-              </div>
+              </Link>
 
               <div className="flex items-center gap-4 text-white">
                 <span>
-                  Hola{" "}
+                  Hola{' '}
                   <span className="italic font-semibold">{userObj.name}</span>
                 </span>
                 <form action="/logout" method="post">
