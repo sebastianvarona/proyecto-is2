@@ -1,4 +1,4 @@
-import { StatusType } from "../utils/types";
+import { StatusType } from '../utils/types';
 
 export default function StatusTile({ status }: { status: number }) {
   return (
@@ -17,40 +17,40 @@ export default function StatusTile({ status }: { status: number }) {
 
 function getText(status: number) {
   switch (status) {
-    case StatusType.ACEPTADO:
-      return "Aceptado";
+    case StatusType.COMPLETADO:
+      return 'Completado';
     case StatusType.PENDIENTE:
-      return "Pendiente";
+      return 'Pendiente';
     case StatusType.RECHAZADO:
-      return "Rechazado";
+      return 'Rechazado';
     case StatusType.CANCELADO:
-      return "Cancelado";
+      return 'Cancelado';
     default:
-      return "Desconocido";
+      return 'Desconocido';
   }
 }
 
 function getColor(status: number) {
   switch (status) {
-    case StatusType.ACEPTADO:
-      return "bg-green-500";
+    case StatusType.COMPLETADO:
+      return 'bg-green-500';
     case StatusType.PENDIENTE:
-      return "bg-yellow-500";
+      return 'bg-yellow-500';
     case StatusType.RECHAZADO:
-      return "bg-red-500";
+      return 'bg-red-500';
     default:
-      return "bg-gray-500";
+      return 'bg-gray-500';
   }
 }
 function getBgColor(status: number) {
   switch (status) {
-    case StatusType.ACEPTADO:
-      return "bg-green-500/10";
+    case StatusType.COMPLETADO:
+      return 'bg-green-500/10';
     case StatusType.PENDIENTE:
-      return "bg-yellow-500/10";
+      return 'bg-yellow-500/10';
     case StatusType.RECHAZADO:
-      return "bg-red-500/10";
+      return 'bg-red-500/10';
     default:
-      return "bg-gray-500/10";
+      return 'bg-gray-500/10';
   }
 }

@@ -1,10 +1,18 @@
-import { db } from "../utils/db.server";
-import { StatusType } from "../utils/types";
+import { db } from '../utils/db.server';
+import { StatusType } from '../utils/types';
 
-export async function getCounselingsFromStudent(studentId: string) {
+export async function getCounselingsFromStudent(
+  studentId: string,
+  month: number,
+  year: number
+) {
   const counselings = await db.counseling.findMany({
     where: {
       studentId: studentId,
+      date: {
+        gte: new Date(year, month - 1, 1),
+        lt: new Date(year, month, 1),
+      },
     },
     select: {
       id: true,
@@ -27,10 +35,10 @@ export async function getCounselingsFromStudent(studentId: string) {
     },
     orderBy: [
       {
-        date: "asc",
+        status: 'asc',
       },
       {
-        status: "asc",
+        date: 'asc',
       },
     ],
   });
@@ -47,7 +55,7 @@ export async function getCounselingsFromTeacher(teacherId: string) {
       date: true,
       description: true,
       status: true,
-      teacher: {
+      student: {
         select: {
           id: true,
           name: true,
@@ -61,9 +69,14 @@ export async function getCounselingsFromTeacher(teacherId: string) {
         },
       },
     },
-    orderBy: {
-      date: "asc",
-    },
+    orderBy: [
+      {
+        status: 'asc',
+      },
+      {
+        date: 'asc',
+      },
+    ],
   });
   return counselings;
 }
@@ -163,6 +176,27 @@ export async function updateCounselingAsStudent({
     },
     data: {
       description: description,
+      date: datetime,
+    },
+  });
+  return counseling;
+}
+
+export async function updateCounselingAsTeacher({
+  id,
+  status,
+  datetime,
+}: {
+  id: string;
+  status: number;
+  datetime: Date;
+}) {
+  const counseling = await db.counseling.update({
+    where: {
+      id: id,
+    },
+    data: {
+      status,
       date: datetime,
     },
   });

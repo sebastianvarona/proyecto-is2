@@ -1,4 +1,4 @@
-import { db } from "../utils/db.server";
+import { db } from '../utils/db.server';
 
 export async function getGroupsFromUser(userId: string) {
   const groups = await db.group.findMany({

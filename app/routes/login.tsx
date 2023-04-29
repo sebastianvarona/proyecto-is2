@@ -1,30 +1,30 @@
-import type { ActionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { Form, Link, useActionData } from "@remix-run/react";
-import { useEffect, useRef } from "react";
-import { verifyLogin } from "~/lib/models/user.server";
-import { createUserSession } from "~/lib/utils/session.server";
+import type { ActionArgs } from '@remix-run/node';
+import { json } from '@remix-run/node';
+import { Form, Link, useActionData } from '@remix-run/react';
+import { useEffect, useRef } from 'react';
+import { verifyLogin } from '~/lib/models/user.server';
+import { createUserSession } from '~/lib/utils/session.server';
 
 export function validateEmail(email: unknown): email is string {
-  return typeof email === "string" && email.length > 3 && email.includes("@");
+  return typeof email === 'string' && email.length > 3 && email.includes('@');
 }
 
 export const action = async ({ request }: ActionArgs) => {
   const formData = await request.formData();
-  const email = formData.get("email");
-  const password = formData.get("password");
-  const remember = formData.get("remember");
+  const email = formData.get('email');
+  const password = formData.get('password');
+  const remember = formData.get('remember');
 
   if (!validateEmail(email)) {
     return json(
-      { errors: { email: "Email is invalid", password: null } },
+      { errors: { email: 'Email is invalid', password: null } },
       { status: 400 }
     );
   }
 
-  if (typeof password !== "string" || password.length === 0) {
+  if (typeof password !== 'string' || password.length === 0) {
     return json(
-      { errors: { email: null, password: "Password is required" } },
+      { errors: { email: null, password: 'Password is required' } },
       { status: 400 }
     );
   }
@@ -33,13 +33,13 @@ export const action = async ({ request }: ActionArgs) => {
 
   if (!user) {
     return json(
-      { errors: { email: "Invalid email or password", password: null } },
+      { errors: { email: 'Invalid email or password', password: null } },
       { status: 400 }
     );
   }
 
   return createUserSession({
-    remember: remember === "on" ? true : false,
+    remember: remember === 'on' ? true : false,
     request,
     userId: user.id,
   });
@@ -160,7 +160,7 @@ export default function LoginRoute() {
 
                 <div className="grid grid-cols-1 gap-4 mt-6">
                   <Link
-                    to={"/"}
+                    to={'/'}
                     className="flex w-full items-center outline outline-black/20 justify-center gap-3 rounded-md bg-white px-3 py-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D9BF0]"
                   >
                     <img src="/icons/google.svg" className="w-8" alt="Google" />

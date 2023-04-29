@@ -1,5 +1,6 @@
 import {
   CalendarDaysIcon,
+  ClipboardDocumentCheckIcon,
   ClipboardDocumentListIcon,
   ClockIcon,
   UserGroupIcon,
@@ -18,8 +19,9 @@ import es from 'date-fns/locale/es';
 import {
   deleteCounseling,
   getCounseling,
-  updateCounselingAsStudent,
+  updateCounselingAsTeacher,
 } from '~/lib/models/counseling.server';
+import { StatusType } from '~/lib/utils/types';
 
 export async function action({ request, params }: ActionArgs) {
   const formData = await request.formData();
@@ -35,14 +37,14 @@ export async function action({ request, params }: ActionArgs) {
 
   const date = formData.get('date');
   const time = formData.get('time');
-  const description = formData.get('description');
+  const status = formData.get('status');
 
   // Datetime variable
   const datetime = new Date(`${date} ${time}`);
 
-  await updateCounselingAsStudent({
+  await updateCounselingAsTeacher({
     id: counselingId!,
-    description: description as string,
+    status: +status!,
     datetime,
   });
 
@@ -67,9 +69,7 @@ export default function Counseling() {
   const dateString = data.counseling!.date;
   const [selectedDate, setSelectedDate] = useState<Date>(new Date(dateString));
   const [selectedTime, setSelectedTime] = useState<Date>(new Date(dateString));
-  const [description, setDescription] = useState<string>(
-    data.counseling!.description
-  );
+  const [status, setStatus] = useState<number>(data.counseling!.status);
 
   return (
     <>
@@ -93,6 +93,34 @@ export default function Counseling() {
           <div className="grid grid-flow-row grid-cols-1 gap-2 mt-1">
             {/* FORM */}
             <input type="hidden" name="closed" value={Number(wasClosed)} />
+            <div>
+              <label
+                htmlFor="status"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Estado
+              </label>
+              <div className="relative mt-2 rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <ClipboardDocumentCheckIcon
+                    className="w-5 h-5 text-gray-400"
+                    aria-hidden="true"
+                  />
+                </div>
+                <select
+                  name="status"
+                  id="status"
+                  value={status}
+                  onChange={(e) => setStatus(+e.target.value)}
+                  className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 outline-none"
+                >
+                  <option value={StatusType.PENDIENTE}>Pendiente</option>
+                  <option value={StatusType.COMPLETADO}>Completado</option>
+                  <option value={StatusType.CANCELADO}>Cancelado</option>
+                  <option value={StatusType.RECHAZADO}>Rechazado</option>
+                </select>
+              </div>
+            </div>
             <div>
               <label
                 htmlFor="group"
@@ -218,25 +246,6 @@ export default function Counseling() {
                     setSelectedTime(date);
                   }}
                   className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 outline-none"
-                />
-              </div>
-            </div>
-            <div>
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Razón
-              </label>
-              <div className="relative mt-2 rounded-md shadow-sm">
-                <textarea
-                  name="description"
-                  minLength={3}
-                  id="description"
-                  onChange={(e) => setDescription(e.target.value)}
-                  value={description}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 outline-none"
-                  placeholder="Escribe una razón"
                 />
               </div>
             </div>

@@ -4,33 +4,33 @@ import {
   ClockIcon,
   UserGroupIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline";
-import { Popover } from "@headlessui/react";
-import { DayPicker } from "react-day-picker";
-import { Form, useLoaderData } from "@remix-run/react";
-import { useState } from "react";
-import type { Group } from "@prisma/client";
-import { getGroupsFromUser } from "~/lib/models/group.server";
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { getUser, requireUser } from "~/lib/utils/session.server";
-import { format } from "date-fns";
-import es from "date-fns/locale/es";
-import { getTeacherFromGroup } from "~/lib/models/user.server";
-import { createCounseling } from "~/lib/models/counseling.server";
-import { StatusType } from "~/lib/utils/types";
+} from '@heroicons/react/24/outline';
+import { Popover } from '@headlessui/react';
+import { DayPicker } from 'react-day-picker';
+import { Form, useLoaderData } from '@remix-run/react';
+import { useState } from 'react';
+import type { Group } from '@prisma/client';
+import { getGroupsFromUser } from '~/lib/models/group.server';
+import type { ActionArgs, LoaderArgs } from '@remix-run/node';
+import { redirect } from '@remix-run/node';
+import { json } from '@remix-run/node';
+import { getUser, requireUser } from '~/lib/utils/session.server';
+import { format } from 'date-fns';
+import es from 'date-fns/locale/es';
+import { getTeacherFromGroup } from '~/lib/models/user.server';
+import { createCounseling } from '~/lib/models/counseling.server';
+import { StatusType } from '~/lib/utils/types';
 
 export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
 
-  const closed = formData.get("closed");
-  if (Number(closed)) return redirect("/student");
+  const closed = formData.get('closed');
+  if (Number(closed)) return redirect('/student');
 
-  const group = formData.get("group");
-  const date = formData.get("date");
-  const time = formData.get("time");
-  const description = formData.get("description");
+  const group = formData.get('group');
+  const date = formData.get('date');
+  const time = formData.get('time');
+  const description = formData.get('description');
 
   // Datetime variable
   const datetime = new Date(`${date} ${time}`);
@@ -47,7 +47,7 @@ export async function action({ request }: ActionArgs) {
     status: StatusType.PENDIENTE,
   });
 
-  return redirect("/student");
+  return redirect('/student');
 }
 
 export const loader = async ({ request }: LoaderArgs) => {
@@ -164,7 +164,7 @@ export default function AddCounseling() {
                 type="hidden"
                 name="date"
                 id="date"
-                value={format(selectedDate, "yyyy-MM-dd")}
+                value={format(selectedDate, 'yyyy-MM-dd')}
               />
               <div className="relative mt-2 rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -175,7 +175,7 @@ export default function AddCounseling() {
                 </div>
                 <Popover className="relative block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 outline-none">
                   <Popover.Button className="w-full text-left">
-                    {format(selectedDate, "PPP", {
+                    {format(selectedDate, 'PPP', {
                       locale: es,
                     })}
                   </Popover.Button>

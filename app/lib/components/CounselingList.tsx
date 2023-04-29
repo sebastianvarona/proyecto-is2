@@ -2,15 +2,15 @@ import {
   MagnifyingGlassPlusIcon,
   PencilIcon,
   XCircleIcon,
-} from "@heroicons/react/24/solid";
-import { Dialog, Transition } from "@headlessui/react";
+} from '@heroicons/react/24/solid';
+import { Dialog, Transition } from '@headlessui/react';
 
-import { Fragment, useState } from "react";
-import { format } from "date-fns";
-import { Form, Link } from "@remix-run/react";
-import StatusTile from "./Status";
-import { es } from "date-fns/locale";
-import { StatusType } from "../utils/types";
+import { Fragment, useState } from 'react';
+import { format } from 'date-fns';
+import { Form, Link } from '@remix-run/react';
+import StatusTile from './Status';
+import { es } from 'date-fns/locale';
+import { StatusType } from '../utils/types';
 
 export interface Counseling {
   id: string;
@@ -18,6 +18,10 @@ export interface Counseling {
   description: string;
   status: number;
   teacher: {
+    id: string;
+    name: string;
+  };
+  student?: {
     id: string;
     name: string;
   };
@@ -29,10 +33,10 @@ export interface Counseling {
 }
 
 interface Props {
-  canCreate?: boolean;
+  role: string;
   data: any;
 }
-export default function CounselingList({ data }: Props) {
+export default function CounselingList({ data, role }: Props) {
   const [isReason, setIsReason] = useState(false);
   const [currentCounseling, setCurrentCounseling] = useState<Counseling>(
     data.counselings[0]
@@ -47,7 +51,7 @@ export default function CounselingList({ data }: Props) {
 
   function formatDate(date: Date) {
     const d = new Date(date);
-    const formattedDate = format(d, "PPP", {
+    const formattedDate = format(d, 'PPP', {
       locale: es,
     });
     return formattedDate;
@@ -55,7 +59,7 @@ export default function CounselingList({ data }: Props) {
 
   function getTime(date: Date) {
     const d = new Date(date);
-    const time = format(d, "HH:mm");
+    const time = format(d, 'HH:mm');
     return time;
   }
 
@@ -97,7 +101,7 @@ export default function CounselingList({ data }: Props) {
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        {currentCounseling?.description || "No hay razón"}
+                        {currentCounseling?.description || 'No hay razón'}
                       </p>
                     </div>
 
@@ -141,6 +145,14 @@ export default function CounselingList({ data }: Props) {
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
                     Grupo
+                  </th>
+                  <th
+                    scope="col"
+                    className={`px-3 py-3.5 text-left text-sm font-semibold text-gray-900 ${
+                      role === 'teacher' ? '' : 'hidden'
+                    }`}
+                  >
+                    Estudiante
                   </th>
                   <th
                     scope="col"
@@ -190,6 +202,13 @@ export default function CounselingList({ data }: Props) {
                       {c.group.name}
                     </td>
                     <td
+                      className={`px-3 py-4 text-sm text-gray-500 whitespace-nowrap ${
+                        role === 'teacher' ? '' : 'hidden'
+                      }`}
+                    >
+                      {c.student?.name ?? ''}
+                    </td>
+                    <td
                       onClick={() => {
                         setCurrentCounseling(c);
                         openReason();
@@ -206,14 +225,15 @@ export default function CounselingList({ data }: Props) {
                     </td>
                     <td
                       className={`relative py-4 pl-3 pr-4 text-sm font-medium text-right whitespace-nowrap sm:pr-0 ${
-                        c.status == StatusType.CANCELADO ||
-                        c.status == StatusType.RECHAZADO
-                          ? "hidden"
-                          : ""
+                        role === 'student' &&
+                        (c.status == StatusType.CANCELADO ||
+                          c.status == StatusType.RECHAZADO)
+                          ? 'hidden'
+                          : ''
                       }`}
                     >
                       <Link
-                        to={`/student/${c.id}`}
+                        to={`/${role}/${c.id}`}
                         className="text-primary/80 hover:text-primary"
                       >
                         <PencilIcon className="w-5 h-5" />
@@ -222,15 +242,16 @@ export default function CounselingList({ data }: Props) {
                     </td>
                     <td
                       className={`relative py-4 pl-3 pr-4 text-sm font-medium text-right whitespace-nowrap sm:pr-0 ${
-                        c.status == StatusType.CANCELADO ||
-                        c.status == StatusType.RECHAZADO
-                          ? "hidden"
-                          : ""
+                        role === 'student' &&
+                        (c.status == StatusType.CANCELADO ||
+                          c.status == StatusType.RECHAZADO)
+                          ? 'hidden'
+                          : ''
                       }`}
                     >
                       <Form
                         method="DELETE"
-                        action={`/student/${c.id}`}
+                        action={`/${role}/${c.id}`}
                         className="flex text-primary/80 hover:text-primary"
                       >
                         <button type="submit">

@@ -1,22 +1,41 @@
-import type { Counseling } from "~/lib/components/CounselingList";
-import CounselingList from "~/lib/components/CounselingList";
-import Sidebar from "~/lib/components/Sidebar";
-import dayPickerStyles from "~/styles/daypicker.css";
-import type { LoaderArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { getUser, requireUser } from "~/lib/utils/session.server";
-import { getGroupsFromUser } from "~/lib/models/group.server";
-import type { User } from "~/lib/models/user.server";
-import { getTeachers } from "~/lib/models/user.server";
-import { getCounselingsFromStudent } from "~/lib/models/counseling.server";
-import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import CounselingList from '~/lib/components/CounselingList';
+import Sidebar from '~/lib/components/Sidebar';
+import dayPickerStyles from '~/styles/daypicker.css';
+import type { LoaderArgs } from '@remix-run/node';
+import { json } from '@remix-run/node';
+import { getUser, requireUser } from '~/lib/utils/session.server';
+import { getGroupsFromUser } from '~/lib/models/group.server';
+import type { User } from '~/lib/models/user.server';
+import { getTeachers } from '~/lib/models/user.server';
+import { getCounselingsFromStudent } from '~/lib/models/counseling.server';
+import { Link, Outlet, useLoaderData } from '@remix-run/react';
+
+interface StudentCounseling {
+  id: string;
+  date: Date;
+  description: string;
+  status: number;
+  teacher: {
+    id: string;
+    name: string;
+  };
+  group: {
+    id: string;
+    name: string;
+    subjectName: string;
+  };
+}
 
 export const loader = async ({ request }: LoaderArgs) => {
   await requireUser(request);
   const user = await getUser(request);
 
-  if (user!.isTeacher) return redirect("/teacher");
+  const query = new URLSearchParams(request.url.split('?')[1]);
+  const monthYear = query.get('monthYear');
+  const [monthString, yearString] = monthYear?.split('-') ?? [null, null];
+  const date = new Date();
+  const month = monthString ? +monthString : date.getMonth() + 1;
+  const year = yearString ? +yearString : date.getFullYear();
 
   // groups that the user is in
   const groups = await getGroupsFromUser(user?.id!);
@@ -24,18 +43,24 @@ export const loader = async ({ request }: LoaderArgs) => {
   // teachers that are in the same groups as the user
   const teachers = await getTeachers(groups);
 
-  const counselings: Counseling[] = await getCounselingsFromStudent(user?.id!);
+  const counselings: StudentCounseling[] = await getCounselingsFromStudent(
+    user?.id!,
+    month,
+    year
+  );
 
   return json({
     user,
     teachers,
     counselings,
     groups,
+    month: month - 1,
+    year,
   });
 };
 
 export function links() {
-  return [{ rel: "stylesheet", href: dayPickerStyles }];
+  return [{ rel: 'stylesheet', href: dayPickerStyles }];
 }
 
 export default function StudentRoute() {
@@ -47,7 +72,10 @@ export default function StudentRoute() {
       <Outlet />
 
       {/* SIDEBAR */}
-      <Sidebar teachers={teachers} />
+      <Sidebar
+        teachers={teachers}
+        activeMonth={new Date(data.year, data.month)}
+      />
       <div className="h-screen max-h-screen col-span-9 p-8">
         <div className="px-4 pt-20 sm:px-6 lg:px-8">
           <div className="sm:flex sm:items-center">
@@ -56,7 +84,7 @@ export default function StudentRoute() {
                 Asesorías
               </h1>
             </div>
-            <div className={"mt-4 sm:ml-16 sm:mt-0 sm:flex-none"}>
+            <div className={'mt-4 sm:ml-16 sm:mt-0 sm:flex-none'}>
               <Link
                 to="add"
                 type="button"
@@ -66,7 +94,7 @@ export default function StudentRoute() {
               </Link>
             </div>
           </div>
-          <CounselingList canCreate data={data} />
+          <CounselingList role="student" data={data} />
         </div>
       </div>
     </>

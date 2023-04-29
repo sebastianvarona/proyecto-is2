@@ -1,6 +1,6 @@
 export enum StatusType {
-  ACEPTADO,
   PENDIENTE,
-  RECHAZADO,
+  COMPLETADO,
   CANCELADO,
+  RECHAZADO,
 }
