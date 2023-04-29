@@ -262,6 +262,16 @@ export default function CounselingList({ data, role }: Props) {
                     </td>
                   </tr>
                 ))}
+                {data.counselings.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={role === 'teacher' ? 10 : 8}
+                      className="px-3 py-4 text-sm text-gray-500 whitespace-nowrap"
+                    >
+                      No hay asesorías
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
